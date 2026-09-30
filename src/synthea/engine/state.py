@@ -441,18 +441,19 @@ class EncounterEndState(State):
     def run(self, person: 'Person', time: datetime) -> bool:
         """End the current encounter and yield to the next time step.
 
-        Returning False (yield) prevents modules that loop back to an Encounter
-        state immediately after EncounterEnd from cycling indefinitely within a
-        single time step — matching the Java Synthea engine's behaviour where
-        ending an encounter naturally breaks the within-step loop.
+        If the encounter was already ended in a previous time step, advance
+        the module. If this is the first end in this time step, yield to
+        prevent cycling back to Encounter states within the same step.
         """
         end_key = f'{self.module.name}.{self.name}_ended_at'
         last_ended = person.attributes.get(end_key)
 
-        if last_ended == time:
-            # Already ended this encounter at this time step; yield again.
-            return False
+        # If ended in a previous time step, it's safe to advance now.
+        if last_ended is not None and last_ended != time:
+            del person.attributes[end_key]
+            return True
 
+        # First time closing in this time step: close and yield.
         if hasattr(person, 'record') and 'current_encounter' in person.attributes:
             encounter = person.attributes['current_encounter']
             person.record.encounter_end(encounter, time)
