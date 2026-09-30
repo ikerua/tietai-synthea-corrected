@@ -459,7 +459,7 @@ class EncounterEndState(State):
             del person.attributes['current_encounter']
 
         person.attributes[end_key] = time
-        return True
+        return False
 
 
 class ConditionOnsetState(State):
