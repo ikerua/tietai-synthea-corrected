@@ -385,9 +385,9 @@ class Logic:
         
         # Special handling for None/null
         if target_value is None:
-            if operator_str == '==':
+            if operator_str in ('==', 'is'):
                 return person_value is None
-            elif operator_str == '!=':
+            elif operator_str in ('!=', 'is not'):
                 return person_value is not None
             return False
         
