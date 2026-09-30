@@ -50,6 +50,8 @@ VITAL_CODES: Dict[str, Dict[str, Any]] = {
     'Respiration Rate': {'code': _code('9279-1', 'Respiratory rate'), 'unit': '/min'},
     'Oxygen Saturation': {
         'code': _code('2708-6', 'Oxygen saturation in Arterial blood'), 'unit': '%'},
+    'Blood Glucose': {'code': _code('2345-7', 'Glucose [Mass/volume] in Blood'),
+                      'unit': 'mg/dL'},
 }
 
 #: The blood pressure panel, recorded as one Observation with two components.
@@ -103,6 +105,7 @@ def baseline_vitals(person: 'Person') -> Dict[str, float]:
     heart_rate = Biometrics.range('cardiovascular', 'heart_rate', 'normal')
     respiration = Biometrics.range('respiratory', 'respiration_rate', 'normal')
     saturation = Biometrics.range('cardiovascular', 'oxygen_saturation', 'normal')
+    blood_glucose = Biometrics.range('metabolic', 'blood_glucose', 'normal')
 
     if systolic:
         values['Systolic Blood Pressure'] = round(person.random.uniform(*systolic), 1)
@@ -114,6 +117,8 @@ def baseline_vitals(person: 'Person') -> Dict[str, float]:
         values['Respiration Rate'] = round(person.random.uniform(*respiration), 1)
     if saturation:
         values['Oxygen Saturation'] = round(person.random.uniform(*saturation), 1)
+    if blood_glucose:
+        values['Blood Glucose'] = round(person.random.uniform(*blood_glucose), 1)
 
     return values
 
